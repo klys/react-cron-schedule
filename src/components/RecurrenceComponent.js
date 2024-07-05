@@ -198,44 +198,48 @@ function RecurrenceComponent(props) {
 	};
 
 	return (
-		<div style={props?.styles?.root}>
-			<Frequency {...props} setValue={setValue} state={state} setState={setStateData} />
-			{state?.repeat === REPEAT_OPTIONS.WEEKLY ? (
-				<WeekSelection
-					{...props}
-					setValue={setValue}
-					state={state}
-					setState={setStateData}
-				/>
-			) : state?.repeat === REPEAT_OPTIONS.MONTHLY || state?.repeat === REPEAT_OPTIONS.YEARLY ? (
-				<>
-				<MonthSelection {...props} setValue={setValue} state={state} setState={setStateData} />
-				{ state.selectedMonthDay === MONTH_DAY_TYPES.SELECT_DAYS_MANUALLY && state.monthOption === MONTH_OPTIONS.CUSTOM && 
+		<div>
+			<div style={props?.styles?.root}>
+				<Frequency {...props} setValue={setValue} state={state} setState={setStateData} />
+				{state?.repeat === REPEAT_OPTIONS.WEEKLY ? (
 					<WeekSelection
 						{...props}
 						setValue={setValue}
 						state={state}
 						setState={setStateData}
 					/>
+				) : state?.repeat === REPEAT_OPTIONS.MONTHLY || state?.repeat === REPEAT_OPTIONS.YEARLY ? (
+					<>
+					<MonthSelection {...props} setValue={setValue} state={state} setState={setStateData} />
+					{ state.selectedMonthDay === MONTH_DAY_TYPES.SELECT_DAYS_MANUALLY && state.monthOption === MONTH_OPTIONS.CUSTOM && 
+						<WeekSelection
+							{...props}
+							setValue={setValue}
+							state={state}
+							setState={setStateData}
+						/>
+					}
+					{!(state.selectedMonthDayOrder === ORDERS.LAST && state.monthOption === MONTH_OPTIONS.CUSTOM) &&
+					<RepeatFor {...props} setValue={setValue} state={state} setState={setStateData}/>
+	}
+					</>
+				) : null}
+				<DateSelection {...props} setValue={setValue} state={state} setState={setStateData} />
+				<TimeSelection {...props} setValue={setValue} state={state} setState={setStateData} />
+				{(
+					(state?.repeat === REPEAT_OPTIONS.MONTHLY || state?.repeat === REPEAT_OPTIONS.YEARLY) &&
+					(state?.monthOption === MONTH_OPTIONS.STANDARD 
+						|| (state?.monthOption === MONTH_OPTIONS.CUSTOM && state?.selectedMonthDayOrder !== ORDERS.LAST && [MONTH_DAY_TYPES.DAY, MONTH_DAY_TYPES.WEEKDAY].includes(state?.selectedMonthDay))
+					)
+				) &&
+					<AdditionalOptions {...props} setValue={setValue} state={state} setState={setStateData}/>
 				}
-				{!(state.selectedMonthDayOrder === ORDERS.LAST && state.monthOption === MONTH_OPTIONS.CUSTOM) &&
-				<RepeatFor {...props} setValue={setValue} state={state} setState={setStateData}/>
-}
-				</>
-			) : null}
-			<DateSelection {...props} setValue={setValue} state={state} setState={setStateData} />
-			<TimeSelection {...props} setValue={setValue} state={state} setState={setStateData} />
-			{(
-				(state?.repeat === REPEAT_OPTIONS.MONTHLY || state?.repeat === REPEAT_OPTIONS.YEARLY) &&
-				(state?.monthOption === MONTH_OPTIONS.STANDARD 
-					|| (state?.monthOption === MONTH_OPTIONS.CUSTOM && state?.selectedMonthDayOrder !== ORDERS.LAST && [MONTH_DAY_TYPES.DAY, MONTH_DAY_TYPES.WEEKDAY].includes(state?.selectedMonthDay))
-				)
-			) &&
-				<AdditionalOptions {...props} setValue={setValue} state={state} setState={setStateData}/>
-			}
+				
+			</div>
 			<ReccurringText {...props} setValue={setValue} state={state} setState={setStateData} />
 			{props.showCronExpression && <div style={{marginTop: 20}}>{state?.cronExpression}</div>}
 		</div>
+		
 	);
 }
 
